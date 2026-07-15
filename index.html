@@ -14,32 +14,38 @@
     <style>
         .front-bg{
             background-image: url("Assets/bg/fbg.png");
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
         }
     </style>
 </head>
 <body class="bg-gray-800">
-    <section class="relative min-h-screen hero-bg overflow-hidden front-bg">
+    <section class="relative bg-green-500 min-h-screen hero-bg overflow-hidden front-bg">
     <nav id="navbar" class="fixed top-0 z-50 inset-x-0 px-4 py-3 transition-colors duration-300">
+        <!-- gradient overlay biar teks selalu kebaca walau background terang -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent -z-10 pointer-events-none"></div>
+
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <img src="Assets/Icon/Icon.png" alt="Logo" class="w-8 h-11 sm:w-10 sm:h-14">
-                <span id="lg-tittle" class="font-poppins text-black font-bold text-lg sm:text-2xl lg:text-[24px] text-nowrap">
+                <img src="Assets/Icon/Icon.png" alt="Logo" class="w-8 h-11 sm:w-10 sm:h-14 drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+                <span id="lg-tittle" class="font-poppins text-white font-bold text-lg sm:text-2xl lg:text-[24px] text-nowrap transition-colors duration-300 [text-shadow:_0_2px_8px_rgb(0_0_0_/_80%)]">
                     Aero Imperial
                 </span>
             </div>
 
             <!-- Menu desktop -->
             <ul class="hidden md:flex items-center space-x-6">
-                <li><a href="#" class="text-white hover:text-gray-300">Home</a></li>
-                <li><a href="#" class="text-white hover:text-gray-300">About</a></li>
+                <li><a href="#" class="text-white hover:text-gray-300 [text-shadow:_0_2px_6px_rgb(0_0_0_/_70%)]">Home</a></li>
+                <li><a href="#" class="text-white hover:text-gray-300 [text-shadow:_0_2px_6px_rgb(0_0_0_/_70%)]">About</a></li>
             </ul>
 
             <!-- Tombol hamburger, cuma muncul di mobile -->
             <button id="menuBtn" class="md:hidden text-white focus:outline-none cursor-pointer">
-                <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <svg id="iconClose" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg id="iconClose" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 hidden drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -122,16 +128,6 @@
             }
         });
 
-        const title = document.getElementById('lg-tittle');
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                title.classList.add('text-white');
-            } else {
-                title.classList.remove('text-white');
-                title.classList.add('text-black')
-            }
-        });
     </script>
 </body>
 </html>
