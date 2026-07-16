@@ -337,10 +337,10 @@
             });
         }
 
-        // Coba muter otomatis begitu halaman selesai dimuat
+        
         window.addEventListener('load', startMusic);
 
-        // Kalau diblokir, begitu user pertama kali klik/tap/scroll di mana aja, langsung muter
+        
         const unlockEvents = ['click', 'touchstart', 'keydown', 'scroll'];
         function unlockAudioOnce() {
             startMusic();
