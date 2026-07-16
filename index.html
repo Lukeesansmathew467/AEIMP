@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Assets/bg/fbg2.png">
     <title>AERO IMPERIAL</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,11 +13,42 @@
     }
     </style>
     <style>
+        .fire-glow {
+            background: linear-gradient(
+                to top,
+                rgba(255, 30, 0, 0.55) 0%,
+                rgba(255, 60, 0, 0.25) 30%,
+                rgba(255, 60, 0, 0.08) 60%,
+                transparent 100%
+            );
+            filter: blur(6px);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                opacity: 0.7;
+                transform: scaleY(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleY(1.15);
+            }
+        }
         .front-bg{
             background-image: url("Assets/bg/fbg3.png");
-            background-size: 100% 100%;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: fixed;
+
+            background-size: cover;
+        }
+
+        /* Desktop / layar lebar -> balik ke 100% 100% biar posisi elemen di gambar presisi */
+        @media (min-width: 1024px) {
+            .front-bg{
+                background-size: 100% 100%;
+            }
         }
 
         /* Animasi muncul dari bawah pas halaman pertama kali dibuka */
@@ -41,9 +73,9 @@
     </style>
 </head>
 <body class="bg-gray-800">
-    <section class="relative bg-green-500 min-h-screen hero-bg overflow-hidden front-bg border-b-3 border-red-500">
+    <section class="relative bg-green-500 min-h-screen hero-bg overflow-hidden front-bg ">
     <nav id="navbar" class="fixed top-0 z-50 inset-x-0 px-4 py-3 transition-colors duration-300">
-        <!-- gradient overlay biar teks selalu kebaca walau background terang -->
+        <!-- gradient overlay -->
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent -z-10 pointer-events-none"></div>
 
         <div class="flex items-center justify-between">
@@ -54,13 +86,26 @@
                 </span>
             </div>
 
+            
+
             <!-- Menu desktop -->
             <ul class="hidden md:flex items-center space-x-6">
+                <button id="musicBtn" aria-label="Toggle music" class="text-white p-2 hover:text-gray-300 focus:outline-none cursor-pointer">
+                <svg id="musicIconOn" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
+                </svg>
+                <svg id="musicIconOff" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H2v6h4l5 4V5z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 9l-6 6M17 9l6 6" />
+                </svg>
+            </button>
                 <li><a href="#" class="text-white hover:text-gray-300 [text-shadow:_0_2px_6px_rgb(0_0_0_/_70%)]">Home</a></li>
-                <li><a href="#" class="text-white hover:text-gray-300 [text-shadow:_0_2px_6px_rgb(0_0_0_/_70%)]">About</a></li>
+                <li><a href="#faq" class="text-white hover:text-gray-300 [text-shadow:_0_2px_6px_rgb(0_0_0_/_70%)]">About</a></li>
             </ul>
 
-            <!-- Tombol hamburger, cuma muncul di mobile -->
+
+            <!-- Tombol hamburger -->
             <button id="menuBtn" class="md:hidden text-white focus:outline-none cursor-pointer">
                 <svg id="iconOpen" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -78,14 +123,21 @@
         </ul>
     </nav>
 
-    <div class="relative z-10 flex flex-col items-center justify-center text-center min-h-screen px-4">
-        <img src="Assets/Icon/Icon.png" alt="Logo" class="fade-in-up delay-1 w-50 h-60 sm:w-95 sm:h-130 tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+    <audio id="bgMusic" loop preload="auto">
+        <source src="Assets/audio/wt.wav" type="audio/wav">
+    </audio>
+
+    <canvas id="fireParticles" class="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-20"></canvas>
+    <div class="fire-glow absolute bottom-0 left-0 w-full h-32 pointer-events-none z-10"></div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center text-center min-h-screen px-4 gap-2">
+        <img src="Assets/Icon/Icon.png" alt="Logo" class="fade-in-up delay-1 w-32 h-40 sm:w-72 sm:h-88 tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
         <h1 class="fade-in-up delay-2 font-poppins text-white font-extrabold text-5xl sm:text-6xl lg:text-7xl tracking-wide [text-shadow:_0_4px_20px_rgb(0_0_0_/_80%)]">
-            AERO IMPERIAL <br>
+            AERO IMPERIAL
         </h1>
 
         <a href="https://discord.gg/BQ3EtHu3kc" target="_blank" rel="noopener"
-           class="fade-in-up delay-2 mt-10 inline-flex items-center gap-3 px-12 py-5 rounded-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-base sm:text-lg font-semibold tracking-wide transition-colors duration-200 shadow-lg shadow-black/40">
+           class="fade-in-up delay-2 mt-8 inline-flex items-center gap-3 px-12 py-5 rounded-full bg-[#5865F2] hover:bg-[#4752C4] text-white text-base sm:text-lg font-semibold tracking-wide transition-colors duration-200 shadow-lg shadow-black/40">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" class="w-7 h-7 fill-current">
                 <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14C130.35,52.87,124.11,29.13,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
             </svg>
@@ -94,54 +146,219 @@
     </div>
 
     </section>
-    <section id="faq" class="bg-[#04030f] py-24 px-4">
+    <section id="faq" class="bg-[#04030f]  py-24 px-4">
         <div class="max-w-3xl mx-auto">
             <h2 class="text-white text-4xl font-bold text-center mb-12">FAQ</h2>
 
             <div class="flex flex-col gap-3" id="accordion">
 
                 <div class="faq-item border border-white/10 rounded-xl bg-[#0a0a2e]/60 overflow-hidden">
-                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base">
-                        <span>What routes does Aero Imperial fly?</span>
-                        <svg class="faq-icon w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base cursor-pointer">
+                        <span>Is this squadron open to anyone?</span>
+                        <svg class="faq-icon w-5 h-5 text-red-500 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                     </button>
                     <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
-                        <p class="px-5 pb-4 text-white/60 text-sm">We currently operate across 40+ destinations spanning major business and leisure hubs, with new routes added quarterly based on demand.</p>
+                        <p class="px-5 pb-4 text-white/60 text-sm">Yes! we're open for anyone. Make sure to stay active and keep your activity above 300 weekly! </p>
                     </div>
                 </div>
 
                 <div class="faq-item border border-white/10 rounded-xl bg-[#0a0a2e]/60 overflow-hidden">
-                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base">
-                        <span>How do I book a private charter?</span>
-                        <svg class="faq-icon w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base cursor-pointer">
+                        <span>How to join the Squadron?</span>
+                        <svg class="faq-icon w-5 h-5 text-red-500 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                     </button>
                     <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
-                        <p class="px-5 pb-4 text-white/60 text-sm">Use the "Book a Flight" button above to reach our concierge team, who'll match you with an available aircraft for your dates and route.</p>
+                        <p class="px-5 pb-4 text-white/60 text-sm">First thing first you need to Apply the Squadron Ingame. <br>1. Search for -AEIMP- in the game squadron search then click apply button below. <br>2. Join the discord server if not already then please register to #squadron-registration by attaching your IGN. <br>3. Wait for the staff to approve your application. </p>
                     </div>
                 </div>
 
                 <div class="faq-item border border-white/10 rounded-xl bg-[#0a0a2e]/60 overflow-hidden">
-                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base">
-                        <span>What seat classes are available?</span>
-                        <svg class="faq-icon w-5 h-5 text-amber-400 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left text-white font-semibold text-sm sm:text-base cursor-pointer">
+                        <span>What are the benefits for joining AEIMP?</span>
+                        <svg class="faq-icon w-5 h-5 text-red-500 shrink-0 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                     </button>
                     <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
-                        <p class="px-5 pb-4 text-white/60 text-sm">Every flight offers Standard, Imperial (business), and First Class cabins, each bookable individually through the concierge service.</p>
+                        <p class="px-5 pb-4 text-white/60 text-sm">You'll get a guaranteed 20k squadron research point every 3 days and a very welcoming members!</p>
                     </div>
                 </div>
 
             </div>
         </div>
     </section>
+    <footer class="relative bg-[#030220] py-16 px-4">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 md:gap-50">
+
+            <!-- Logo + deskripsi -->
+            <div class="flex-1 md:max-w-md">
+                <div class="flex items-center gap-2 mb-3">
+                    <img src="Assets/Icon/Icon.png" alt="Logo" class="w-8 h-11">
+                    <h1 class="text-white font-bold text-xl font-poppins">Aero Imperial -AEIMP-</h1>
+                </div>
+                <p class="text-white/60 text-sm leading-relaxed">
+                    Aero Imperial is a War Thunder Squadron based on Indonesia. Currently as part of trio joint squadron Alliance of Trinity.
+                </p>
+            </div>
+
+            <!-- Alliance of Trinity -->
+            <div class="flex-1">
+                <h3 class="text-white/40 text-xs font-semibold tracking-widest uppercase mb-4">Alliance of Trinity</h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="https://discord.gg/BQ3EtHu3kc" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" class="w-4 h-4 fill-current text-gray">
+                                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14C130.35,52.87,124.11,29.13,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                            </svg>
+                            AERO IMPERIAL
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://discord.gg/njHgFCG2rH" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" class="w-4 h-4 fill-current text-gray">
+                                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14C130.35,52.87,124.11,29.13,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                            </svg>
+                            SUV
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://discord.com/invite/RaZenmg" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" class="w-4 h-4 fill-current text-gray">
+                                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21a105.73,105.73,0,0,0,32.17,16.15,77.7,77.7,0,0,0,6.89-11.11,68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14C130.35,52.87,124.11,29.13,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                            </svg>
+                            ITU
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="max-w-5xl mx-auto mt-10 pt-6 border-t border-white/10">
+            <p class="text-white/30 text-xs text-center">© 2026 Aero Imperial. Part of Alliance of Trinity.</p>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+    const canvas = document.getElementById('fireParticles');
+    const ctx = canvas.getContext('2d');
+    const heroSection = canvas.closest('section');
+    let particles = [];
+
+    // biar kotaknya keliatan tajam, gak blur
+    ctx.imageSmoothingEnabled = false;
+
+    function resizeCanvas() {
+        canvas.width = heroSection.offsetWidth;
+        canvas.height = 160;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const pixelColors = ['#ff0000', '#ff3b1a', '#e00000', '#ff6a2e'];
+
+    function createParticle(spawnAnywhere = false) {
+        return {
+            x: Math.random() * canvas.width,
+            y: spawnAnywhere ? Math.random() * canvas.height : canvas.height + Math.random() * 15,
+            size: Math.random() < 0.7 ? 3 : 4, // kotak kecil, cuma 2 ukuran biar tetep "pixel"
+            speedY: Math.random() * 1 + 0.5,
+            speedX: (Math.random() - 0.5) * 0.4,
+            life: 1,
+            decay: Math.random() * 0.012 + 0.007,
+            color: pixelColors[Math.floor(Math.random() * pixelColors.length)],
+            flicker: Math.random() * 100,
+        };
+    }
+
+    for (let i = 0; i < 45; i++) {
+        particles.push(createParticle(true));
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, i) => {
+            p.y -= p.speedY;
+            p.x += p.speedX;
+            p.life -= p.decay;
+            p.flicker += 0.2;
+
+            if (p.life <= 0 || p.y < -10) {
+                particles[i] = createParticle();
+                return;
+            }
+
+            // snap ke grid biar bener2 keliatan kaya pixel
+            const px = Math.floor(p.x / p.size) * p.size;
+            const py = Math.floor(p.y / p.size) * p.size;
+
+            const flickerAlpha = 0.7 + Math.sin(p.flicker) * 0.3;
+            ctx.globalAlpha = Math.max(p.life * flickerAlpha, 0);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(px, py, p.size, p.size);
+        });
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+})();
+    </script>
 
 
     <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicIconOn = document.getElementById('musicIconOn');
+        const musicIconOff = document.getElementById('musicIconOff');
+        let isMusicPlaying = false;
+
+        function updateMusicIcons() {
+            musicIconOn.classList.toggle('hidden', !isMusicPlaying);
+            musicIconOff.classList.toggle('hidden', isMusicPlaying);
+        }
+
+        function startMusic() {
+            if (isMusicPlaying) return;
+            bgMusic.play().then(() => {
+                isMusicPlaying = true;
+                updateMusicIcons();
+            }).catch((err) => {
+                console.warn('Autoplay blocked by the browser, awaiting user interaction:', err);
+            });
+        }
+
+        // Coba muter otomatis begitu halaman selesai dimuat
+        window.addEventListener('load', startMusic);
+
+        // Kalau diblokir, begitu user pertama kali klik/tap/scroll di mana aja, langsung muter
+        const unlockEvents = ['click', 'touchstart', 'keydown', 'scroll'];
+        function unlockAudioOnce() {
+            startMusic();
+            unlockEvents.forEach(evt => document.removeEventListener(evt, unlockAudioOnce));
+        }
+        unlockEvents.forEach(evt => document.addEventListener(evt, unlockAudioOnce, { once: true }));
+
+        musicBtn.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                isMusicPlaying = false;
+                updateMusicIcons();
+            } else {
+                startMusic();
+            }
+        });
+
         const menuBtn = document.getElementById('menuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         const iconOpen = document.getElementById('iconOpen');
@@ -158,9 +375,9 @@
 
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
-                navbar.classList.add('bg-gray-500/30', 'backdrop-blur-md');
+                navbar.classList.add('bg-gray-500/20', 'backdrop-blur-md');
             } else {
-                navbar.classList.remove('bg-gray-500/30', 'backdrop-blur-md');
+                navbar.classList.remove('bg-gray-500/20', 'backdrop-blur-md');
             }
         });
 
